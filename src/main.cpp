@@ -39,7 +39,7 @@ unsigned long was_ota;                  //засекаем время, что б
 
 //=============================================================
 
-AutoOTA ota("1.1", "Srvrn1/RitaRoom");
+AutoOTA ota("1.2", "Srvrn1/RitaRoom");
 
 
 void ota_chek(){
@@ -88,7 +88,7 @@ void callback(char* topic, byte* payload, int length) {          //обраба�
 
 //=================================
   uint8_t bkv = strlen(topic);
-  if(topic[bkv-2] == 'm' && topic[bkv-1] == 'g'){             //если топик /mg не важно с какого ID
+  if(topic[bkv-5] == 'R' &&topic[bkv-4] == 's' && topic[bkv-3] == 'v'&& topic[bkv-2] == 'e' && topic[bkv-1] == 't'){             //если топик /svet не важно с какого ID
 
     if ((char)payload[0] == '1') {                            //включаем свет в сортире
      digitalWrite(led, LOW); 
