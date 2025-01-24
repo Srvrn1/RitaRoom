@@ -30,7 +30,7 @@ PubSubClient client(espClient);
 #define led 2
 String ver, notes;                      //при обновлении  версия и описание
 
-unsigned long lastMsg;                  // время для отправки топиков
+//unsigned long lastMsg;                  // время для отправки топиков
 #define MSG_BUFFER_SIZE	(12)
 char msg[MSG_BUFFER_SIZE];              //сообщение для отправки в топики
 
@@ -39,7 +39,7 @@ unsigned long was_ota;                  //засекаем время, что б
 
 //=============================================================
 
-AutoOTA ota("0.8.1", "Srvrn1/LipaSensorTualet");
+AutoOTA ota("1.0", "Srvrn1/RitaRoom");
 
 
 void ota_chek(){
