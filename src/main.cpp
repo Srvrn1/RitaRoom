@@ -39,7 +39,7 @@ unsigned long was_ota;                  //засекаем время, что б
 
 //=============================================================
 
-AutoOTA ota("1.0", "Srvrn1/RitaRoom");
+AutoOTA ota("1.1", "Srvrn1/RitaRoom");
 
 
 void ota_chek(){
