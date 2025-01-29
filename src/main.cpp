@@ -3,8 +3,6 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <AutoOTA.h>
-//#include <FileData.h>
-//#include <LittleFS.h>
 
 
 const char* ssid = "Dnlvrn";
@@ -30,7 +28,7 @@ PubSubClient client(espClient);
 #define led 2
 String ver, notes;                      //при обновлении  версия и описание
 
-//unsigned long lastMsg;                  // время для отправки топиков
+//unsigned long lastMsg;                // время для отправки топиков
 #define MSG_BUFFER_SIZE	(12)
 char msg[MSG_BUFFER_SIZE];              //сообщение для отправки в топики
 
@@ -39,7 +37,7 @@ unsigned long was_ota;                  //засекаем время, что б
 
 //=============================================================
 
-AutoOTA ota("1.3", "Srvrn1/RitaRoom");
+AutoOTA ota("1.4", "Srvrn1/RitaRoom");
 
 
 void ota_chek(){
@@ -78,24 +76,43 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 //==============================================================================================
-void callback(char* topic, byte* payload, int length) {          //обрабатываем входящие топики
+void callback(char* topic, byte* payload, int length) {          //обрабатываем входящие топики. length-кол-во символоа payload
 
   if(String(topic) == String(Tsupdata) && millis() - was_ota > 5000){       //топик обновы с моего ID то идем на GitHub искать обнову
     was_ota = millis();
     Serial.println("смотрим обнову");
     ota_chek();                     
   }
-
+//===================================
+  /*Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i=0;i<length;i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();*/
 //=================================
   uint8_t bkv = strlen(topic);
-  if(/*topic[bkv-5] == 'R' && topic[bkv-4] == 's' && topic[bkv-3] == 'v' &&*/ topic[bkv-2] == 'e' && topic[bkv-1] == 't'){             //если топик /svet не важно с какого ID
 
-    if ((char)payload[0] == '1') {                            //включаем свет в сортире
+  Serial.print("--");
+  Serial.print(topic[bkv-5]);
+  Serial.print(topic[bkv-4]);
+  Serial.print(topic[bkv-3]);
+  Serial.print(topic[bkv-2]);
+  Serial.print(topic[bkv-1]);
+  Serial.println();
+
+  if(topic[bkv-4] == 'R' && topic[bkv-3] == 'r' && (char)topic[bkv-2] == 'o' && (char)topic[bkv-1] == 'z'){    //если топик /Rroz не важно с какого ID
+
+    if ((char)payload[0] == '1') {                            //включаем свет у Риты
      digitalWrite(led, LOW); 
     } 
     else {
       digitalWrite(led, HIGH); 
     }
+  }
+  else if(topic[bkv-5] == 'R' && topic[bkv-4] == 's' && topic[bkv-3] == 'v' && (char)topic[bkv-2] == 'e' && (char)topic[bkv-1] == 't'){
+
   }
   
 }
