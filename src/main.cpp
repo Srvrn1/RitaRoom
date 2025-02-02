@@ -10,7 +10,7 @@ const char* password =  "2155791975";
 
 //=================================================ТОПИКИ
                   
-const char* Tmg =  "MyDev/10a8c3a2/#" ;   //870690bb/set/mg";         //топик - свет в туалете //ID клиента ноутбук
+const char* Tmg =  "MyDev/10a8c3a2/#" ;   //870690bb/set/mg";         //топик - //ID клиента ноутбук
 const char* Tsupdata = "MyDev/10a8c3a2/17d35acf/set/supd";            // поиск обновлений ID клиент- мой телефон
 const char* Tvers = "MyDev/10a8c3a2/ID/set/vers";                     // сюда шлем версию прошивы
 
@@ -25,7 +25,12 @@ const char* mqtt_password = "HilZPRjD";
 WiFiClient espClient;
 PubSubClient client(espClient);
 //============================================================
-#define led 2
+#define led 2            //D4
+#define Rroz 4          //D2
+//#define led_brite 14     //D5
+//#define led_beck 12      //D6
+
+
 String ver, notes;                      //при обновлении  версия и описание
 
 //unsigned long lastMsg;                // время для отправки топиков
@@ -37,7 +42,7 @@ unsigned long was_ota;                  //засекаем время, что б
 
 //=============================================================
 
-AutoOTA ota("1.4", "Srvrn1/RitaRoom");
+AutoOTA ota("1.5", "Srvrn1/RitaRoom");
 
 
 void ota_chek(){
@@ -80,6 +85,7 @@ void callback(char* topic, byte* payload, int length) {          //обраба�
 
   if(String(topic) == String(Tsupdata) && millis() - was_ota > 5000){       //топик обновы с моего ID то идем на GitHub искать обнову
     was_ota = millis();
+    client.publish(Tvers, "888");
     Serial.println("смотрим обнову");
     ota_chek();                     
   }
@@ -92,27 +98,32 @@ void callback(char* topic, byte* payload, int length) {          //обраба�
   }
   Serial.println();*/
 //=================================
-  uint8_t bkv = strlen(topic);
+  uint8_t bkv = strlen(topic);     //узнаем сколько букв в топике
 
-  Serial.print("--");
+  /*Serial.print("--");
   Serial.print(topic[bkv-5]);
   Serial.print(topic[bkv-4]);
   Serial.print(topic[bkv-3]);
   Serial.print(topic[bkv-2]);
   Serial.print(topic[bkv-1]);
-  Serial.println();
+  Serial.println();*/
 
   if(topic[bkv-4] == 'R' && topic[bkv-3] == 'r' && (char)topic[bkv-2] == 'o' && (char)topic[bkv-1] == 'z'){    //если топик /Rroz не важно с какого ID
+    if ((char)payload[0] == '1') {                            //включаем свет у Риты
+     digitalWrite(Rroz, LOW); 
+    } 
+    else {
+      digitalWrite(Rroz, HIGH); 
+    }
+  }
 
+  else if(topic[bkv-5] == 'R' && topic[bkv-4] == 's' && topic[bkv-3] == 'v' && (char)topic[bkv-2] == 'e' && (char)topic[bkv-1] == 't'){
     if ((char)payload[0] == '1') {                            //включаем свет у Риты
      digitalWrite(led, LOW); 
     } 
     else {
       digitalWrite(led, HIGH); 
     }
-  }
-  else if(topic[bkv-5] == 'R' && topic[bkv-4] == 's' && topic[bkv-3] == 'v' && (char)topic[bkv-2] == 'e' && (char)topic[bkv-1] == 't'){
-
   }
   
 }
@@ -146,10 +157,11 @@ void reconnect() {
 
 void setup() {
 
-  //LittleFS.begin();
-
   pinMode(led, OUTPUT);    
   digitalWrite(led, HIGH);
+  pinMode(Rroz, OUTPUT);    
+  digitalWrite(led, HIGH);
+  
 
   Serial.begin(74880);
   Serial.println();
